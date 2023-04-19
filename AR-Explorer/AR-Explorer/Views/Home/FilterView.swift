@@ -16,10 +16,11 @@ struct FilterView: View {
     @Binding var endDate: Date
     @Binding var radius: Double
     @Binding var queryText: String
-    @State var includeDate: Bool = false
-    @State var includeRadius: Bool = false
-    @State var includeText: Bool = false
-    @State var includeExample: Bool = false
+    @Binding var includeDate: Bool
+    @Binding var includeRadius: Bool
+    @Binding var includeText: Bool
+    @Binding var includeExample: Bool
+    @Binding var queryLocation: CLLocationCoordinate2D?
     @State var showCamera: Bool = false
     @State var querying: Bool = false
     @State var capturedImage: Data = Data()
@@ -43,13 +44,13 @@ struct FilterView: View {
                     }
                     if ($includeDate.wrappedValue) {
                         HStack() {
-                            
+                            Spacer()
                             DatePicker("", selection: $startDate, displayedComponents: [.date]).labelsHidden()
-//                            Spacer()
-//                            Text("-")
-//                            Spacer()
-//                            DatePicker("",selection: $endDate, displayedComponents: [.date]).labelsHidden()
-//                            Spacer()
+                            Spacer()
+                            Text("-")
+                            Spacer()
+                            DatePicker("",selection: $endDate, displayedComponents: [.date]).labelsHidden()
+                            Spacer()
                         }
                     }
                 }
@@ -62,6 +63,18 @@ struct FilterView: View {
                         Spacer()
                     }
                     if ($includeRadius.wrappedValue) {
+                        if ($queryLocation.wrappedValue != nil) {
+                            HStack {
+                                Text("Location:")
+                                Spacer()
+                                Text("\(String(format: "%.5f", $queryLocation.wrappedValue!.latitude)), \(String(format: "%.5f", $queryLocation.wrappedValue!.longitude))")
+                            }.padding()
+                        } else {
+                            HStack {
+                                Text("Add location by tapping on map!").lineLimit(2).multilineTextAlignment(.leading)
+                            }.padding()
+                        }
+                        
                         Slider(
                             value: $radius,
                             in: 1...100,
@@ -155,7 +168,7 @@ struct FilterView: View {
 
 struct FilterView_Previews: PreviewProvider {
     static var previews: some View {
-        FilterView(showSelf: .constant(true), isLoading: .constant(false), startDate: .constant(Date(timeIntervalSince1970: -3155673600.0)), endDate: .constant(Date()), radius: .constant(5.5), queryText: .constant(""))
+        FilterView(showSelf: .constant(true), isLoading: .constant(false), startDate: .constant(Date(timeIntervalSince1970: -3155673600.0)), endDate: .constant(Date()), radius: .constant(5.5), queryText: .constant(""), includeDate: .constant(false), includeRadius: .constant(false), includeText: .constant(false), includeExample: .constant(false), queryLocation: .constant(nil))
     }
 }
 
@@ -178,8 +191,8 @@ extension FilterView {
             print(formatter.string(from: startDate))
             queryTerms.append(QueryTerm(categories: ["temporaldistance"], type: QueryTerm.ModelType.time, data: "\(formatter.string(from: startDate))"))
         }
-        if ($includeRadius.wrappedValue) {
-            queryTerms.append(QueryTerm(categories: ["spatialdistance"], type: QueryTerm.ModelType.location, data: "[\(String(locationManagerModel.location.coordinate.latitude)), \(String(locationManagerModel.location.coordinate.longitude))]"))
+        if ($includeRadius.wrappedValue && $queryLocation.wrappedValue != nil) {
+            queryTerms.append(QueryTerm(categories: ["spatialdistance"], type: QueryTerm.ModelType.location, data: "[\($queryLocation.wrappedValue!.latitude), \(String($queryLocation.wrappedValue!.longitude))]"))
         }
         if ($includeText.wrappedValue) {
             queryTerms.append(QueryTerm(categories: ["visualtextcoembedding"], type: QueryTerm.ModelType.text, data: "\($queryText.wrappedValue)"))
@@ -189,9 +202,7 @@ extension FilterView {
                 let uiImage = UIImage(data: imageData.capturedImage, scale: 0.1)!
                 let uiImage2 = resizeImage(image: uiImage, maxSize: 500.0)
                 let base64 = uiImage2.jpegData(compressionQuality: 0.1)!.base64EncodedString()
-                queryTerms.append(QueryTerm(categories: ["globalcolor"], type: QueryTerm.ModelType.image, data: "data:image/jpeg;base64,\(base64)"))
-                queryTerms.append(QueryTerm(categories: ["localcolor"], type: QueryTerm.ModelType.image, data: "data:image/jpeg;base64,\(base64)"))
-                queryTerms.append(QueryTerm(categories: ["edge"], type: QueryTerm.ModelType.image, data: "data:image/jpeg;base64,\(base64)"))
+                queryTerms.append(QueryTerm(categories: ["globalcolor", "localcolor","edge"], type: QueryTerm.ModelType.image, data: "data:image/jpeg;base64,\(base64)"))
             } else {
                 return
             }
@@ -292,6 +303,31 @@ extension FilterView {
                                     let index = apiImages.firstIndex(where: { $0.id == apiImage.id })!
                                     apiImages[index].score = keyValueList[(apiImage.id + "_1")] ?? 0.0
                                     
+                                    if ($includeRadius.wrappedValue && $queryLocation.wrappedValue != nil) {
+                                        let nodeLocation = CLLocation(latitude: apiImage.lat, longitude: apiImage.lng)
+                                        let distance = CLLocation(latitude: $queryLocation.wrappedValue!.latitude, longitude: $queryLocation.wrappedValue!.longitude).distance(from: nodeLocation)
+                                        
+                                        if distance > (radius*1000) {
+                                            apiImages.remove(at: index)
+                                            return
+                                        }
+                                    }
+                                    
+                                    if ($includeDate.wrappedValue) {
+                                        let formatter = DateFormatter()
+                                        formatter.calendar = Calendar(identifier: .iso8601)
+                                        formatter.locale = .current
+                                        formatter.timeZone = .current
+                                        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+                                        let date: Date? = formatter.date(from: apiImage.date) ?? nil
+                                        
+                                        if (date != nil) {
+                                            if (min(startDate, endDate) ... max(startDate, endDate)).contains(date)) {
+                                                apiImages.remove(at: index)
+                                                return
+                                            }
+                                        }
+                                    }
                                     
                                     DefaultAPI.getThumbnailsWithId(id: "\(apiImage.id)_1") { (response, error) in
                                         guard error == nil else {
@@ -315,10 +351,6 @@ extension FilterView {
                 }
             }
         }
-    }
-    
-    public func setCapturedImage(image: Data) {
-        capturedImage = image
     }
     
     func apply(apiImages: [ApiImage]) {

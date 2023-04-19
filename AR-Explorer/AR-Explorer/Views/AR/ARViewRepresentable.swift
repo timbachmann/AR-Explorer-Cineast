@@ -139,7 +139,6 @@ struct ARViewRepresentable: UIViewRepresentable {
         rectangle.alpha = 1.0
         let labelNode = SKLabelNode(text: String(Int(distance)) + "m")
         labelNode.fontSize = 32
-        //labelNode.fontName = "San Fransisco"
         labelNode.position = CGPoint(x:75, y:60)
         labelNode.zRotation = CGFloat(GLKMathDegreesToRadians(180))
         skScene.addChild(rectangle)

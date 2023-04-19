@@ -30,6 +30,7 @@ struct MapView: UIViewRepresentable {
     @Binding var zoomOnLocation: Bool
     @Binding var changeMapType: Bool
     @Binding var applyAnnotations: Bool
+    @Binding var queryLocation: CLLocationCoordinate2D?
     let region: MKCoordinateRegion
     let mapType: MKMapType
     let showsUserLocation: Bool
@@ -51,6 +52,8 @@ struct MapView: UIViewRepresentable {
         mapView.showsUserLocation = showsUserLocation
         mapView.showsTraffic = true
         mapView.showsBuildings = true
+        let gRecognizer = UITapGestureRecognizer(target: context.coordinator, action: #selector(Coordinator.addAnnotationOnTapGesture(sender:)))
+        mapView.addGestureRecognizer(gRecognizer)
         return mapView
     }
     
@@ -106,6 +109,25 @@ struct MapView: UIViewRepresentable {
             )
             
             mapView.addAnnotation(annotation)
+        }
+    }
+    
+    func handleTap(sender: UITapGestureRecognizer) {
+        if sender.state == .ended {
+            let location = sender.location(in: mapView)
+            let coordinate = mapView.convert(location,toCoordinateFrom: mapView)
+            
+            // Add annotation:
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = coordinate
+            print(" Coordinates ======= \(coordinate)")
+            
+            /* to show only one pin while tapping on map by removing the last.
+             If you want to show multiple pins you can remove this piece of code */
+            if mapView.annotations.count == 1 {
+                mapView.removeAnnotation(mapView.annotations.last!)
+            }
+            mapView.addAnnotation(annotation) // add annotaion pin on the map
         }
     }
     
@@ -244,5 +266,22 @@ struct MapView: UIViewRepresentable {
                 return MKOverlayRenderer()
             }
         }
+        
+        @objc func addAnnotationOnTapGesture(sender: UITapGestureRecognizer) {
+                if sender.state == .ended {
+                    let point = sender.location(in: mapView.mapView)
+                    let coordinate = mapView.mapView.convert(point, toCoordinateFrom: mapView.mapView)
+                    let annotation = MKPointAnnotation()
+                    annotation.coordinate = coordinate
+                    annotation.title = "Query Location"
+                    for currentAnnotation in mapView.mapView.annotations {
+                        if currentAnnotation is MKPointAnnotation {
+                            mapView.mapView.removeAnnotation(currentAnnotation)
+                        }
+                    }
+                    mapView.$queryLocation.wrappedValue = coordinate
+                    mapView.mapView.addAnnotation(annotation)
+                }
+            }
     }
 }

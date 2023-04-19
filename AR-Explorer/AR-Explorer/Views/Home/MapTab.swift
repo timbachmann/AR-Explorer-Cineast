@@ -42,12 +42,17 @@ struct MapTab: View {
     @State private var startDate: Date = Date(timeIntervalSince1970: -3155673600.0)
     @State private var endDate: Date = Date(timeIntervalSinceNow: 0.0)
     @State private var queryText: String = ""
+    @State private var includeDate: Bool = false
+    @State private var includeRadius: Bool = false
+    @State private var includeText: Bool = false
+    @State private var includeExample: Bool = false
+    @State private var queryLocation: CLLocationCoordinate2D? = nil
     @State private var coordinateRegion = MKCoordinateRegion.init(center: CLLocationCoordinate2D(latitude: CLLocationManager().location?.coordinate.latitude ?? 47.559_601, longitude: CLLocationManager().location?.coordinate.longitude ?? 7.588_576), span: MKCoordinateSpan(latitudeDelta: 0.0051, longitudeDelta: 0.0051))
     
     var body: some View {
         NavigationView {
             ZStack {
-                MapView(mapMarkerImages: $imageData.explorerImages, navigationImage: $imageData.navigationImage, selectedTab: $selectedTab, showDetail: $showDetail, detailId: $detailId, zoomOnLocation: $zoomOnLocation, changeMapType: $changeMapType, applyAnnotations: $applyAnnotations, region: coordinateRegion, mapType: mapType, showsUserLocation: true, userTrackingMode: .follow)
+                MapView(mapMarkerImages: $imageData.explorerImages, navigationImage: $imageData.navigationImage, selectedTab: $selectedTab, showDetail: $showDetail, detailId: $detailId, zoomOnLocation: $zoomOnLocation, changeMapType: $changeMapType, applyAnnotations: $applyAnnotations, queryLocation: $queryLocation, region: coordinateRegion, mapType: mapType, showsUserLocation: true, userTrackingMode: .follow)
                     .edgesIgnoringSafeArea(.top)
                     .onChange(of: imageData.explorerImages) { tag in
                         applyAnnotations = true
@@ -91,7 +96,7 @@ struct MapTab: View {
                                     .frame(width: buttonSize)
                                     .background(Color(UIColor.systemBackground).opacity(buttonOpacity))
                                 
-                                NavigationLink(destination: GalleryView(selectedTab: $selectedTab), isActive: $showGallery) {
+                                NavigationLink(destination: GalleryView(selectedTab: $selectedTab, radius: $radius, startDate: $startDate, endDate: $endDate, queryText: $queryText, includeDate: $includeDate, includeRadius: $includeRadius, includeText: $includeText, includeExample: $includeExample ), isActive: $showGallery) {
                                     EmptyView()
                                 }
                                 
@@ -182,7 +187,7 @@ struct MapTab: View {
                 }
                 
                 if $showFilter.wrappedValue {
-                    FilterView(showSelf: $showFilter, isLoading: $isLoading, startDate: $startDate, endDate: $endDate, radius: $radius, queryText: $queryText)
+                    FilterView(showSelf: $showFilter, isLoading: $isLoading, startDate: $startDate, endDate: $endDate, radius: $radius, queryText: $queryText, includeDate: $includeDate, includeRadius: $includeRadius, includeText: $includeText, includeExample: $includeExample, queryLocation: $queryLocation)
                         .frame(width: 350, height: 650)
                         .cornerRadius(20).shadow(radius: 20)
                         .edgesIgnoringSafeArea(.top)

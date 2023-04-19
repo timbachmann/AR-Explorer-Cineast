@@ -172,7 +172,7 @@ extension DetailView {
         formatter.timeZone = .current
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         let date: Date = formatter.date(from: image.date) ?? Date()
-        formatter.dateFormat = "dd.MM.yyyy - HH:mm:ssZ"
+        formatter.dateFormat = "dd.MM.yyyy"
         
         detailDate = Text(formatter.string(from: date))
         detailSource = Text(image.source)
