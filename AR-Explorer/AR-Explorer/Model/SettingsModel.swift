@@ -24,6 +24,7 @@ class SettingsModel: ObservableObject {
         loadSettings { (data, error) in
             if let retrievedData = data {
                 self.serverAddress = retrievedData.serverAddress
+                OpenAPIClientAPI.basePath = retrievedData.serverAddress
                 self.userThumbRight = retrievedData.userThumbRight
             }
         }
@@ -63,6 +64,8 @@ class SettingsModel: ObservableObject {
         } catch let error as NSError {
             print("Unable to delete old Settings \(error.debugDescription)")
         }
+        
+        OpenAPIClientAPI.basePath = serverAddress
         
         let settings = Settings(serverAddress: serverAddress,  userThumbRight: userThumbRight)
         do {

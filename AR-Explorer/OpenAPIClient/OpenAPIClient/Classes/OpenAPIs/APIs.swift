@@ -14,7 +14,7 @@ import Foundation
 public typealias OpenAPIClient = OpenAPIClientAPI
 
 open class OpenAPIClientAPI {
-    public static var basePath = "http://10.34.58.152:1900"
+    public static var basePath = "https://areval.vitrivr.tech" //"http://10.34.58.152:1900"
     public static var customHeaders: [String: String] = [:]
     public static var credential: URLCredential?
     public static var requestBuilderFactory: RequestBuilderFactory = URLSessionRequestBuilderFactory()

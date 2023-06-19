@@ -34,133 +34,153 @@ struct FilterView: View {
         }
         ZStack {
             Color(UIColor.systemBackground)
-            VStack(spacing: 24.0) {
+            ScrollView {
                 VStack(spacing: 24.0) {
-                    HStack {
-                        Toggle(isOn: $includeDate) {
-                            Text("Date Range")
-                        }
-                        Spacer()
-                    }
-                    if ($includeDate.wrappedValue) {
-                        HStack() {
-                            Spacer()
-                            DatePicker("", selection: $startDate, displayedComponents: [.date]).labelsHidden()
-                            Spacer()
-                            Text("-")
-                            Spacer()
-                            DatePicker("",selection: $endDate, displayedComponents: [.date]).labelsHidden()
-                            Spacer()
-                        }
-                    }
-                }
-                Divider()
-                VStack {
-                    HStack {
-                        Toggle(isOn: $includeRadius) {
-                            Text("Radius")
-                        }
-                        Spacer()
-                    }
-                    if ($includeRadius.wrappedValue) {
-                        if ($queryLocation.wrappedValue != nil) {
-                            HStack {
-                                Text("Location:")
-                                Spacer()
-                                Text("\(String(format: "%.5f", $queryLocation.wrappedValue!.latitude)), \(String(format: "%.5f", $queryLocation.wrappedValue!.longitude))")
-                            }.padding()
-                        } else {
-                            HStack {
-                                Text("Add location by tapping on map!").lineLimit(2).multilineTextAlignment(.leading)
-                            }.padding()
-                        }
-                        
-                        Slider(
-                            value: $radius,
-                            in: 1...100,
-                            step: 1.0
-                        )
-                        Text("\(Int(radius)) km")
-                    }
-                }
-                Divider()
-                VStack {
-                    HStack {
-                        Toggle(isOn: $includeText) {
-                            Text("Text Query")
-                        }
-                        Spacer()
-                    }
-                    if ($includeText.wrappedValue) {
-                        TextField("", text: $queryText).textFieldStyle(.roundedBorder)
-                    }
-                }
-                Divider()
-                VStack {
-                    HStack {
-                        Toggle(isOn: $includeExample) {
-                            Text("Query by Example")
-                        }
-                        Spacer()
-                        
-                    }
-                    if ($includeExample.wrappedValue) {
+                    VStack(spacing: 24.0) {
                         HStack {
-                            Button(action: {
-                                $showCamera.wrappedValue.toggle()
-                            }, label: {
-                                Image(systemName: "camera")
-                                    .foregroundColor(Color.accentColor)
-                            })
-                            .padding()
-                            .background(Color(UIColor.lightGray).opacity(0.2))
-                            .frame(width: 48.0, height: 48.0)
-                            .cornerRadius(10.0, corners: [.topLeft, .topRight, .bottomLeft, .bottomRight])
+                            Toggle(isOn: $includeDate) {
+                                Text("Date Range")
+                            }
                             Spacer()
-                            if (UIImage(data: imageData.capturedImage) != nil) {
-                                Image(uiImage: resizeImage(image: UIImage(data: imageData.capturedImage)!, maxSize: 48.0))
-                                    .padding()
+                        }
+                        if ($includeDate.wrappedValue) {
+                            HStack() {
+                                Spacer()
+                                DatePicker("", selection: $startDate, displayedComponents: [.date]).labelsHidden()
+                                Spacer()
+                                Text("-")
+                                Spacer()
+                                DatePicker("",selection: $endDate, displayedComponents: [.date]).labelsHidden()
+                                Spacer()
                             }
                         }
                     }
-                }
-                Divider()
-                Spacer()
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        $showSelf.wrappedValue.toggle()
-                    }, label: {
-                        HStack {
-                            Image(systemName: "multiply.circle")
-                                .foregroundColor(Color.accentColor)
-                            Text("Cancel").foregroundColor(Color.accentColor)
-                        }
-                    })
-                    Spacer()
                     Divider()
-                    Spacer()
-                    Button(action: {
-                        queryImages()
-                        $querying.wrappedValue = true
-                    }, label: {
+                    VStack {
                         HStack {
-                            Image(systemName: "text.magnifyingglass")
-                                .foregroundColor(Color.accentColor)
-                            Text("Apply").foregroundColor(Color.accentColor)
+                            Toggle(isOn: $includeRadius) {
+                                Text("Radius")
+                            }
+                            Spacer()
                         }
-                    })
-                    .disabled(!($includeDate.wrappedValue || $includeText.wrappedValue || $includeRadius.wrappedValue || $includeExample.wrappedValue))
-                    Spacer()
-                    
-                }.frame(maxHeight: 52.0)
+                        if ($includeRadius.wrappedValue) {
+                            if ($queryLocation.wrappedValue != nil) {
+                                HStack {
+                                    Text("Location:")
+                                    Spacer()
+                                    Text("\(String(format: "%.5f", $queryLocation.wrappedValue!.latitude)), \(String(format: "%.5f", $queryLocation.wrappedValue!.longitude))")
+                                }.padding()
+                            } else {
+                                HStack {
+                                    Text("Add location by tapping on map!").lineLimit(2).multilineTextAlignment(.leading)
+                                }.padding()
+                            }
+                            
+                            Slider(
+                                value: $radius,
+                                in: 1...100,
+                                step: 1.0
+                            )
+                            Text("\(Int(radius)) km")
+                        }
+                    }
+                    Divider()
+                    VStack {
+                        HStack {
+                            Toggle(isOn: $includeText) {
+                                Text("Text Query")
+                            }
+                            Spacer()
+                        }
+                        if ($includeText.wrappedValue) {
+                            TextField("", text: $queryText).textFieldStyle(.roundedBorder)
+                        }
+                    }
+                    Divider()
+                    VStack {
+                        HStack {
+                            Toggle(isOn: $includeExample) {
+                                Text("Query by Example")
+                            }
+                            Spacer()
+                            
+                        }
+                        if ($includeExample.wrappedValue) {
+                            HStack {
+                                Button(action: {
+                                    $showCamera.wrappedValue.toggle()
+                                }, label: {
+                                    Image(systemName: "camera")
+                                        .foregroundColor(Color.accentColor)
+                                })
+                                .padding()
+                                .background(Color(UIColor.lightGray).opacity(0.2))
+                                .frame(width: 48.0, height: 48.0)
+                                .cornerRadius(10.0, corners: [.topLeft, .topRight, .bottomLeft, .bottomRight])
+                                Spacer()
+                                if (UIImage(data: imageData.capturedImage) != nil) {
+                                    Image(uiImage: resizeImage(image: UIImage(data: imageData.capturedImage)!, maxSize: 48.0))
+                                        .padding()
+                                }
+                            }
+                        }
+                    }
+                }.padding()
+            }.padding()
+            VStack {
+                Spacer()
+                ZStack {
+                    Color(UIColor.systemBackground)
+                        .frame(maxHeight: 52.0)
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            $showSelf.wrappedValue.toggle()
+                        }, label: {
+                            HStack {
+                                Image(systemName: "multiply.circle")
+                                    .foregroundColor(Color.accentColor)
+                                Text("Cancel").foregroundColor(Color.accentColor)
+                            }
+                        })
+                        Spacer()
+                        Divider()
+                        Spacer()
+                        Button(action: {
+                            queryImages()
+                            $querying.wrappedValue = true
+                        }, label: {
+                            HStack {
+                                Image(systemName: "text.magnifyingglass")
+                                    .foregroundColor(Color.accentColor)
+                                Text("Apply").foregroundColor(Color.accentColor)
+                            }
+                        })
+                        .disabled(!($includeDate.wrappedValue || $includeText.wrappedValue || ($includeRadius.wrappedValue && $queryLocation.wrappedValue != nil) || $includeExample.wrappedValue))
+                        Spacer()
+                        
+                    }
+                        .frame(maxHeight: 52.0)
+                }
             }.padding()
             if ($querying.wrappedValue) {
                 ZStack {
                     Color(UIColor.systemBackground).opacity(0.8)
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                }
+                    VStack {
+                        EmptyView()
+                        Spacer()
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                        Spacer()
+                        Button(action: {
+                            $querying.wrappedValue = false
+                        }, label: {
+                            Image(systemName: "multiply.circle")
+                                .foregroundColor(Color.gray)
+                                .frame(width: 56.0, height: 56.0)
+                        }).padding()
+                    }
+                }.padding()
             }
         }
     }
@@ -288,6 +308,8 @@ extension FilterView {
                                         switch metadataElement.key {
                                         case "bearing":
                                             apiImages[index].bearing = Int(metadataElement.value ?? "0") ?? 0
+                                        case "yaw":
+                                            apiImages[index].yaw = Float(metadataElement.value ?? "0.0") ?? 0.0
                                         case "Photographer":
                                             apiImages[index].source = metadataElement.value!
                                         default:
@@ -302,18 +324,19 @@ extension FilterView {
                                     
                                     let index = apiImages.firstIndex(where: { $0.id == apiImage.id })!
                                     apiImages[index].score = keyValueList[(apiImage.id + "_1")] ?? 0.0
+                                    var removed: Bool = false
                                     
                                     if ($includeRadius.wrappedValue && $queryLocation.wrappedValue != nil) {
                                         let nodeLocation = CLLocation(latitude: apiImage.lat, longitude: apiImage.lng)
                                         let distance = CLLocation(latitude: $queryLocation.wrappedValue!.latitude, longitude: $queryLocation.wrappedValue!.longitude).distance(from: nodeLocation)
-                                        
+                                        print(distance)
                                         if distance > (radius*1000) {
                                             apiImages.remove(at: index)
-                                            return
+                                            removed = true
                                         }
                                     }
                                     
-                                    if ($includeDate.wrappedValue) {
+                                    if ($includeDate.wrappedValue && !removed) {
                                         let formatter = DateFormatter()
                                         formatter.calendar = Calendar(identifier: .iso8601)
                                         formatter.locale = .current
@@ -322,27 +345,33 @@ extension FilterView {
                                         let date: Date? = formatter.date(from: apiImage.date) ?? nil
                                         
                                         if (date != nil) {
-                                            if (min(startDate, endDate) ... max(startDate, endDate)).contains(date)) {
+                                            if (!(min(startDate, endDate) ... max(startDate, endDate)).contains(date!)) {
                                                 apiImages.remove(at: index)
-                                                return
+                                                removed = true
                                             }
                                         }
                                     }
                                     
-                                    DefaultAPI.getThumbnailsWithId(id: "\(apiImage.id)_1") { (response, error) in
-                                        guard error == nil else {
-                                            print(error ?? "Could not query thumbnail for \(apiImage.id)!")
-                                            return
+                                    if (!removed) {
+                                        DefaultAPI.getThumbnailsWithId(id: "\(apiImage.id)_1") { (response, error) in
+                                            guard error == nil else {
+                                                print(error ?? "Could not query thumbnail for \(apiImage.id)!")
+                                                return
+                                            }
+                                            
+                                            if (response != nil) {
+                                                apiImages[index].thumbnail = response!
+                                                finalImages.append(apiImages[index])
+                                                
+                                                DispatchQueue.main.async(execute: {
+                                                    apply(apiImages: finalImages)
+                                                })
+                                            }
                                         }
-
-                                        if (response != nil) {
-                                            apiImages[index].thumbnail = response!
-                                            finalImages.append(apiImages[index])
-
-                                            DispatchQueue.main.async(execute: {
-                                                apply(apiImages: finalImages)
-                                            })
-                                        }
+                                    } else {
+                                        DispatchQueue.main.async(execute: {
+                                            apply(apiImages: finalImages)
+                                        })
                                     }
                                 }
                             }
@@ -354,11 +383,13 @@ extension FilterView {
     }
     
     func apply(apiImages: [ApiImage]) {
+        print(apiImages.count)
         imageData.explorerImages = apiImages
         $showSelf.wrappedValue = false
         $querying.wrappedValue = false
         imageData.explorerImages.sort(by: { $0.score > $1.score })
         imageData.saveImagesToFile()
+        imageData.saveQueryToFile()
     }
     
     func resizeImage(image: UIImage, maxSize: CGFloat) -> UIImage {

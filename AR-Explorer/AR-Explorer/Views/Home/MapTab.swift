@@ -38,21 +38,12 @@ struct MapTab: View {
     @State private var changeMapType: Bool = false
     @State private var applyAnnotations: Bool = false
     @State private var showCamera: Bool = false
-    @State private var radius: Double = 2.0
-    @State private var startDate: Date = Date(timeIntervalSince1970: -3155673600.0)
-    @State private var endDate: Date = Date(timeIntervalSinceNow: 0.0)
-    @State private var queryText: String = ""
-    @State private var includeDate: Bool = false
-    @State private var includeRadius: Bool = false
-    @State private var includeText: Bool = false
-    @State private var includeExample: Bool = false
-    @State private var queryLocation: CLLocationCoordinate2D? = nil
     @State private var coordinateRegion = MKCoordinateRegion.init(center: CLLocationCoordinate2D(latitude: CLLocationManager().location?.coordinate.latitude ?? 47.559_601, longitude: CLLocationManager().location?.coordinate.longitude ?? 7.588_576), span: MKCoordinateSpan(latitudeDelta: 0.0051, longitudeDelta: 0.0051))
     
     var body: some View {
         NavigationView {
             ZStack {
-                MapView(mapMarkerImages: $imageData.explorerImages, navigationImage: $imageData.navigationImage, selectedTab: $selectedTab, showDetail: $showDetail, detailId: $detailId, zoomOnLocation: $zoomOnLocation, changeMapType: $changeMapType, applyAnnotations: $applyAnnotations, queryLocation: $queryLocation, region: coordinateRegion, mapType: mapType, showsUserLocation: true, userTrackingMode: .follow)
+                MapView(mapMarkerImages: $imageData.explorerImages, navigationImage: $imageData.navigationImage, selectedTab: $selectedTab, showDetail: $showDetail, detailId: $detailId, zoomOnLocation: $zoomOnLocation, changeMapType: $changeMapType, applyAnnotations: $applyAnnotations, queryLocation: $imageData.queryLocation, region: coordinateRegion, mapType: mapType, showsUserLocation: true, userTrackingMode: .follow)
                     .edgesIgnoringSafeArea(.top)
                     .onChange(of: imageData.explorerImages) { tag in
                         applyAnnotations = true
@@ -65,6 +56,7 @@ struct MapTab: View {
                             Spacer()
                         }
                         VStack(alignment: .leading) {
+                            Spacer().frame(maxHeight: 64.0)
                             VStack(spacing: 0) {
                                 Button(action: {
                                     mapStyleSheetVisible = !mapStyleSheetVisible
@@ -96,7 +88,7 @@ struct MapTab: View {
                                     .frame(width: buttonSize)
                                     .background(Color(UIColor.systemBackground).opacity(buttonOpacity))
                                 
-                                NavigationLink(destination: GalleryView(selectedTab: $selectedTab, radius: $radius, startDate: $startDate, endDate: $endDate, queryText: $queryText, includeDate: $includeDate, includeRadius: $includeRadius, includeText: $includeText, includeExample: $includeExample ), isActive: $showGallery) {
+                                NavigationLink(destination: GalleryView(selectedTab: $selectedTab, radius: $imageData.radius, startDate: $imageData.startDate, endDate: $imageData.endDate, queryText: $imageData.queryText, includeDate: $imageData.includeDate, includeRadius: $imageData.includeRadius, includeText: $imageData.includeText, includeExample: $imageData.includeExample ), isActive: $showGallery) {
                                     EmptyView()
                                 }
                                 
@@ -137,6 +129,19 @@ struct MapTab: View {
                                 .cornerRadius(10.0, corners: [.bottomLeft, .bottomRight])
                             }
                             Spacer()
+                                .frame(height: 24)
+                            
+                            Button(action: {
+                                $showCamera.wrappedValue.toggle()
+                            }, label: {
+                                Image(systemName: "camera")
+                                    .foregroundColor(Color.accentColor)
+                            })
+                            .frame(width: 48.0, height: 48.0)
+                            .background(Color(UIColor.systemBackground).opacity(0.95))
+                            .cornerRadius(10.0, corners: [.topLeft, .topRight, .bottomLeft, .bottomRight])
+                            
+                            Spacer()
                         }
                         .padding(8.0)
                         
@@ -156,6 +161,10 @@ struct MapTab: View {
                         }
                         .frame(height: 32)
                     }
+                }
+                
+                NavigationLink(destination: CameraViewCapture(), isActive: $showCamera) {
+                    EmptyView()
                 }
                 
                 NavigationLink(destination: DetailView(imageIndex: imageData.explorerImages.firstIndex(where: {$0.id == detailId}), selectedTab: $selectedTab), isActive: $showDetail) {
@@ -187,7 +196,7 @@ struct MapTab: View {
                 }
                 
                 if $showFilter.wrappedValue {
-                    FilterView(showSelf: $showFilter, isLoading: $isLoading, startDate: $startDate, endDate: $endDate, radius: $radius, queryText: $queryText, includeDate: $includeDate, includeRadius: $includeRadius, includeText: $includeText, includeExample: $includeExample, queryLocation: $queryLocation)
+                    FilterView(showSelf: $showFilter, isLoading: $isLoading, startDate: $imageData.startDate, endDate: $imageData.endDate, radius: $imageData.radius, queryText: $imageData.queryText, includeDate: $imageData.includeDate, includeRadius: $imageData.includeRadius, includeText: $imageData.includeText, includeExample: $imageData.includeExample, queryLocation: $imageData.queryLocation)
                         .frame(width: 350, height: 650)
                         .cornerRadius(20).shadow(radius: 20)
                         .edgesIgnoringSafeArea(.top)

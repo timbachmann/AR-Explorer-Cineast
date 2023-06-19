@@ -21,6 +21,7 @@ public struct ApiImage: Codable, JSONEncodable, Hashable, Identifiable {
     public var source: String
     public var bearing: Int
     public var score: Double
+    public var yaw: Float
     public var pitch: Float
     public var publicImage: Int
     
@@ -34,6 +35,7 @@ public struct ApiImage: Codable, JSONEncodable, Hashable, Identifiable {
         self.source = String()
         self.bearing = Int()
         self.score = Double()
+        self.yaw = Float()
         self.pitch = Float()
         self.publicImage = Int()
     }
@@ -48,11 +50,12 @@ public struct ApiImage: Codable, JSONEncodable, Hashable, Identifiable {
         self.source = String()
         self.bearing = Int()
         self.score = Double()
+        self.yaw = Float()
         self.pitch = Float()
         self.publicImage = Int()
     }
 
-    public init(id: String, data: Data, thumbnail: Data, lat: Double, lng: Double, date: String, source: String, bearing: Int, score: Double, pitch: Float, publicImage: Int) {
+    public init(id: String, data: Data, thumbnail: Data, lat: Double, lng: Double, date: String, source: String, bearing: Int, score: Double, pitch: Float, yaw: Float, publicImage: Int) {
         self.id = id
         self.data = data
         self.thumbnail = thumbnail
@@ -62,6 +65,7 @@ public struct ApiImage: Codable, JSONEncodable, Hashable, Identifiable {
         self.source = source
         self.bearing = bearing
         self.score = score
+        self.yaw = yaw
         self.pitch = pitch
         self.publicImage = publicImage
     }
@@ -76,6 +80,7 @@ public struct ApiImage: Codable, JSONEncodable, Hashable, Identifiable {
         case source
         case bearing
         case score
+        case yaw
         case pitch
         case publicImage
     }
@@ -94,6 +99,7 @@ public struct ApiImage: Codable, JSONEncodable, Hashable, Identifiable {
         try container.encode(bearing, forKey: .bearing)
         try container.encode(score, forKey: .score)
         try container.encode(pitch, forKey: .pitch)
+        try container.encode(yaw, forKey: .yaw)
         try container.encode(publicImage, forKey: .publicImage)
     }
 }

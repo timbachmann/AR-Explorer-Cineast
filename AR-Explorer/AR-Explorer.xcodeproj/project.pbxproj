@@ -22,6 +22,10 @@
 		222F3C6627B3C59400EEF17B /* AR_ExplorerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222F3C6527B3C59400EEF17B /* AR_ExplorerUITests.swift */; };
 		222F3C6827B3C59400EEF17B /* AR_ExplorerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222F3C6727B3C59400EEF17B /* AR_ExplorerUITestsLaunchTests.swift */; };
 		22371D8927DA4F7D00E9B07C /* LocationManagerModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22371D8827DA4F7D00E9B07C /* LocationManagerModel.swift */; };
+		2251A4242A40541F00CA0DDB /* CameraModelCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2251A41D2A40541F00CA0DDB /* CameraModelCapture.swift */; };
+		2251A4252A40541F00CA0DDB /* PhotoCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2251A41E2A40541F00CA0DDB /* PhotoCapture.swift */; };
+		2251A4272A40541F00CA0DDB /* CameraViewCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2251A4202A40541F00CA0DDB /* CameraViewCapture.swift */; };
+		2251A4282A40541F00CA0DDB /* CameraServiceCapture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2251A4212A40541F00CA0DDB /* CameraServiceCapture.swift */; };
 		226EE91D29E6DF1A00EA9CB2 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226EE91629E6DF1A00EA9CB2 /* CameraPreview.swift */; };
 		226EE91E29E6DF1A00EA9CB2 /* PhotoCaptureProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226EE91729E6DF1A00EA9CB2 /* PhotoCaptureProcessor.swift */; };
 		226EE91F29E6DF1A00EA9CB2 /* CameraModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226EE91829E6DF1A00EA9CB2 /* CameraModel.swift */; };
@@ -82,6 +86,10 @@
 		222F3C6527B3C59400EEF17B /* AR_ExplorerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AR_ExplorerUITests.swift; sourceTree = "<group>"; };
 		222F3C6727B3C59400EEF17B /* AR_ExplorerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AR_ExplorerUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		22371D8827DA4F7D00E9B07C /* LocationManagerModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManagerModel.swift; sourceTree = "<group>"; };
+		2251A41D2A40541F00CA0DDB /* CameraModelCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraModelCapture.swift; sourceTree = "<group>"; };
+		2251A41E2A40541F00CA0DDB /* PhotoCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCapture.swift; sourceTree = "<group>"; };
+		2251A4202A40541F00CA0DDB /* CameraViewCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewCapture.swift; sourceTree = "<group>"; };
+		2251A4212A40541F00CA0DDB /* CameraServiceCapture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraServiceCapture.swift; sourceTree = "<group>"; };
 		225480982865FE620085843E /* Location.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Location.gpx; sourceTree = "<group>"; };
 		226EE91629E6DF1A00EA9CB2 /* CameraPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		226EE91729E6DF1A00EA9CB2 /* PhotoCaptureProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoCaptureProcessor.swift; sourceTree = "<group>"; };
@@ -214,6 +222,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		2251A41A2A40541F00CA0DDB /* CameraCapture */ = {
+			isa = PBXGroup;
+			children = (
+				2251A41D2A40541F00CA0DDB /* CameraModelCapture.swift */,
+				2251A41E2A40541F00CA0DDB /* PhotoCapture.swift */,
+				2251A4202A40541F00CA0DDB /* CameraViewCapture.swift */,
+				2251A4212A40541F00CA0DDB /* CameraServiceCapture.swift */,
+			);
+			path = CameraCapture;
+			sourceTree = "<group>";
+		};
 		226EE91529E6DF1A00EA9CB2 /* Camera */ = {
 			isa = PBXGroup;
 			children = (
@@ -241,6 +260,7 @@
 		2285091A27B3DF3F00E9FB26 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				2251A41A2A40541F00CA0DDB /* CameraCapture */,
 				226EE91529E6DF1A00EA9CB2 /* Camera */,
 				2285091B27B3DF3F00E9FB26 /* Home */,
 				2285092727B3DF3F00E9FB26 /* AR */,
@@ -443,7 +463,10 @@
 				2213A27527B6890C00497182 /* MapView.swift in Sources */,
 				2227E9F427B54CF200E545D4 /* ImageData.swift in Sources */,
 				2285092E27B3DF3F00E9FB26 /* MapTab.swift in Sources */,
+				2251A4242A40541F00CA0DDB /* CameraModelCapture.swift in Sources */,
 				226EE92329E6DF1A00EA9CB2 /* CameraService.swift in Sources */,
+				2251A4282A40541F00CA0DDB /* CameraServiceCapture.swift in Sources */,
+				2251A4272A40541F00CA0DDB /* CameraViewCapture.swift in Sources */,
 				226EE92029E6DF1A00EA9CB2 /* Photo.swift in Sources */,
 				220A0B5127F86F8E0088FB45 /* AppDelegate.swift in Sources */,
 				22003DEC292BA1FF0012A5A4 /* FilterView.swift in Sources */,
@@ -453,6 +476,7 @@
 				22CFC77727DB912200E4BD26 /* ImageAnnotation.swift in Sources */,
 				2285093A27B3DF3F00E9FB26 /* ARTab.swift in Sources */,
 				22A6E18C2811E72C0094C890 /* SettingsModel.swift in Sources */,
+				2251A4252A40541F00CA0DDB /* PhotoCapture.swift in Sources */,
 				226EE92229E6DF1A00EA9CB2 /* CameraView.swift in Sources */,
 				22003DEA292BA15B0012A5A4 /* UIImage+Extension.swift in Sources */,
 				22CFC77327DB90B300E4BD26 /* ImageAnnotationView.swift in Sources */,
@@ -648,7 +672,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.timbachmann.ar-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -687,7 +711,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.1;
+				MARKETING_VERSION = 1.0.2;
 				PRODUCT_BUNDLE_IDENTIFIER = "de.timbachmann.ar-explorer";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

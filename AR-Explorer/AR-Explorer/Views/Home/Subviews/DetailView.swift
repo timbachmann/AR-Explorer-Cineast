@@ -88,7 +88,7 @@ struct DetailView: View {
                     detailSource ?? Text("").font(.subheadline)
                 }
             }
-            /*ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
                     showingUpdate = true
                 }, label: {
@@ -99,28 +99,12 @@ struct DetailView: View {
                     return ActionSheet(title: Text("Make image public?"), buttons: [
                         .destructive(Text("Yes")){
                             
-                            let localIndex = imageData.imagesToUpload.firstIndex{$0.id == image.id}
-                            if (localIndex != nil) {
-                                return
-                            }
-                            /*ImageAPI.updateImageById(userID: UIDevice.current.identifierForVendor!.uuidString, imageId: image.id) { (response, error) in
-                                guard error == nil else {
-                                    print(error ?? "Could not update image!")
-                                    return
-                                }
-                                
-                                if (response != nil) {
-                                    imageData.explorerImages.remove(at: imageIndex!)
-                                    imageData.saveImagesToFile()
-                                    self.mode.wrappedValue.dismiss()
-                                    dump(response)
-                                }
-                            }*/
+                            uploadImage(paramName: "key-that-is-ignored-file", fileName: image.id, image: UIImage(data: image.data)!)
                         },
                         .cancel()
                     ])
                 }
-            }*/
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
                     showingOptions = true
@@ -153,6 +137,7 @@ struct DetailView: View {
                         .cancel()
                     ])
                 }
+                .disabled(true)
             }
         }
     }
@@ -208,5 +193,71 @@ extension DetailView {
         let uiImage = UIImage(data: image.data)
         detailImage = Image(uiImage: uiImage!)
         isLoading = false
+    }
+    
+    func uploadImage(paramName: String, fileName: String, image: UIImage) {
+        let url = URL(string: "https://areval.vitrivr.tech/upload-api")
+
+        // generate boundary string using a unique per-app string
+        let boundary = UUID().uuidString
+
+        let session = URLSession.shared
+
+        // Set the URLRequest to POST and to the specified URL
+        var urlRequest = URLRequest(url: url!)
+        urlRequest.httpMethod = "POST"
+
+        // Set Content-Type Header to multipart/form-data, this is equivalent to submitting form data with file upload in a web browser
+        // And the boundary is also set here
+        urlRequest.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        var data = Data()
+        let paramNameId = "key-that-is-ignored-id"
+        
+        data.append("--\(boundary)\r\n".data(using: .utf8)!)
+        data.append("Content-Disposition: form-data; name=\"\(paramNameId)\"\r\n".data(using: .utf8)!)
+        data.append("Content-Type: text/plain \r\n\r\n".data(using: .utf8)!)
+        data.append("\(fileName)".data(using: .utf8)!)
+        data.append("\r\n".data(using: .utf8)!)
+        
+        // Add the image data to the raw http request data
+        data.append("\r\n--\(boundary)\r\n".data(using: .utf8)!)
+        data.append("Content-Disposition: form-data; name=\"\(paramName)\"; filename=\"\(fileName).jpg\"\r\n".data(using: .utf8)!)
+        data.append("Content-Type: image/jpeg \r\n\r\n".data(using: .utf8)!)
+        data.append(image.jpegData(compressionQuality: 0.1)!)
+        data.append("\r\n--\(boundary)--\r\n".data(using: .utf8)!)
+
+        // Send a POST request to the URL, with the data we created earlier
+        session.uploadTask(with: urlRequest, from: data, completionHandler: { responseData, response, error in
+            if error == nil {
+                var string = String(bytes: responseData!, encoding: .utf8)!.replacingOccurrences(of: "\r\n", with: "").replacingOccurrences(of: #"\ "#, with: "")
+                
+                let imagePath = string.split(separator: "'")[1]
+                
+                
+                SessionAPI.startExtraction() { (response, error) in
+                    guard error == nil else {
+                        print(error ?? "Could not start extraction!")
+                        return
+                    }
+                    
+//                    var extractionContainer = ExtractionItemContainer(object: MediaObjectDescriptor(objectid: fileName + "-1", name: fileName + "-1.jpg", path: fileName + "-1.jpg", mediatype: .image, exists: false), metadata:  uri: String(imagePath))
+                    var extractionContainerMessage = ExtractionContainerMessage(items: [extractionContainer])
+                    SessionAPI.extractItem(extractionContainerMessage: extractionContainerMessage) { (response, error) in
+                        guard error == nil else {
+                            print(error ?? "Could not start extraction!")
+                            return
+                        }
+                        
+                        
+                        
+                    }
+                    
+                }
+                
+            } else {
+                print(error ?? "error")
+            }
+        }).resume()
     }
 }

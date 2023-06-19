@@ -12,11 +12,11 @@ import UIKit
 #endif
 
 open class DefaultAPI {
-
+    
     /**
      Get objects with id
      
-     - parameter id: (path)  
+     - parameter id: (path)
      - parameter apiResponseQueue: The queue on which api response is dispatched.
      - parameter completion: completion handler to receive the data and the error objects
      */
@@ -31,12 +31,12 @@ open class DefaultAPI {
             }
         }
     }
-
+    
     /**
      Get objects with id
      - GET /objects/{id}
-     - parameter id: (path)  
-     - returns: RequestBuilder<Void> 
+     - parameter id: (path)
+     - returns: RequestBuilder<Void>
      */
     open class func getObjectsWithIdWithRequestBuilder(id: String) -> RequestBuilder<Data> {
         var localVariablePath = "/objects/{id}"
@@ -45,20 +45,20 @@ open class DefaultAPI {
         localVariablePath = localVariablePath.replacingOccurrences(of: "{id}", with: idPostEscape, options: .literal, range: nil)
         let localVariableURLString = OpenAPIClientAPI.basePath + localVariablePath
         let localVariableParameters: [String: Any]? = nil
-
+        
         let localVariableUrlComponents = URLComponents(string: localVariableURLString)
-
+        
         let localVariableNillableHeaders: [String: Any?] = [
             :
         ]
-
+        
         let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
-
+        
         let localVariableRequestBuilder: RequestBuilder<Data>.Type = OpenAPIClientAPI.requestBuilderFactory.getBuilder()
-
+        
         return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: false)
     }
-
+    
     /**
      Get thumbnails with id
      
@@ -77,7 +77,7 @@ open class DefaultAPI {
             }
         }
     }
-
+    
     /**
      Get thumbnails with id
      - GET /thumbnails/{id}
@@ -91,17 +91,17 @@ open class DefaultAPI {
         localVariablePath = localVariablePath.replacingOccurrences(of: "{id}", with: idPostEscape, options: .literal, range: nil)
         let localVariableURLString = OpenAPIClientAPI.basePath + localVariablePath
         let localVariableParameters: [String: Any]? = nil
-
+        
         let localVariableUrlComponents = URLComponents(string: localVariableURLString)
-
+        
         let localVariableNillableHeaders: [String: Any?] = [
             :
         ]
-
+        
         let localVariableHeaderParameters = APIHelper.rejectNilHeaders(localVariableNillableHeaders)
-
+        
         let localVariableRequestBuilder: RequestBuilder<Data>.Type = OpenAPIClientAPI.requestBuilderFactory.getBuilder()
-
+        
         return localVariableRequestBuilder.init(method: "GET", URLString: (localVariableUrlComponents?.string ?? localVariableURLString), parameters: localVariableParameters, headers: localVariableHeaderParameters, requiresAuthentication: false)
     }
 }
